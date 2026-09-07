@@ -1,0 +1,42 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.water.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "refmap": "water-refmap.json",
+  "client": [
+    "WorldRendererMixin",
+    "WorldMixin",
+    "WeatherRenderingMixin",
+    "ClientConnectionMixin",
+    "ClientWorldMixin",
+    "AbstractClientPlayerEntityMixin",
+    "CameraMixin",
+    "EntityMixin",
+    "EntityRendererMixin",
+    "LightningEntityRendererMixin",
+    "LivingEntityMixin",
+    "PlayerEntityRendererMixin",
+    "PlayerListEntryMixin",
+    "TextRendererMixin",
+    "HandledScreenAccessor",
+    "InputAccessor",
+    "MinecraftClientAccessor",
+    "MinecraftClientAttackMixin",
+    "KeyboardInputMixin",
+    "MouseMixin",
+    "ClientPlayerEntityMixin",
+    "LabelCommandRendererMixin",
+    "ChatHudMixin",
+    "ChatScreenMixin",
+    "PlayerListHudMixin",
+    "WaterMenuKeyboardMixin",
+    "AutoMineMixin",
+    "HeldItemRendererMixin",
+    "DepthTestFixMixin",
+    "WaterUserDetector"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
