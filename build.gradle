@@ -1,0 +1,139 @@
+plugins {
+    id 'fabric-loom' version '1.14-SNAPSHOT'
+}
+
+version = project.mod_version
+group = project.maven_group
+
+base {
+    archivesName = project.archives_base_name
+}
+
+repositories {
+    mavenCentral()
+    maven { url = 'https://repo.spongepowered.org/maven' }
+}
+
+dependencies {
+    minecraft "com.mojang:minecraft:${project.minecraft_version}"
+    mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
+    modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+    annotationProcessor "org.spongepowered:mixin:0.8.5:processor"
+    // Decompiler-hostile classes are kept as normalized bytecode until their
+    // recovered Java bodies are manually repaired. This directory is also
+    // packaged into the development JAR below.
+    compileOnly files('src/main/prebuilt')
+}
+
+def recoveredBytecodeFallbacks = [
+    'com/water/WaterClient.java',
+    'com/water/client/ClientBootstrap.java',
+    'com/water/gui/BlockSelectionScreen.java',
+    'com/water/gui/ChatMacroScreen.java',
+    'com/water/gui/ClickGuiScreen.java',
+    'com/water/gui/ConfigManagerScreen.java',
+    'com/water/gui/HudEditor.java',
+    'com/water/gui/SpotifyBrowserScreen.java',
+    'com/water/gui/ToastManager.java',
+    'com/water/gui/hud/SpotifyQueueHud.java',
+    'com/water/module/ModuleManager.java',
+    'com/water/module/modules/client/ConfigShare.java',
+    'com/water/module/modules/client/DiscordRPC.java',
+    'com/water/module/modules/client/Hud.java',
+    'com/water/module/modules/client/SpotifyHud.java',
+    'com/water/module/modules/combat/AnchorMacro.java',
+    'com/water/module/modules/combat/AutoCrystal.java',
+    'com/water/module/modules/combat/AutoDoubleHand.java',
+    'com/water/module/modules/combat/AutoInventoryTotem.java',
+    'com/water/module/modules/combat/DoubleAnchor.java',
+    'com/water/module/modules/combat/SingleAnchor.java',
+    'com/water/module/modules/combat/SpearSwap.java',
+    'com/water/module/modules/combat/Triggerbot.java',
+    'com/water/module/modules/donut/ActivityDebug.java',
+    'com/water/module/modules/donut/AntiTrap.java',
+    'com/water/module/modules/donut/BoneDropper.java',
+    'com/water/module/modules/donut/FakeRoles.java',
+    'com/water/module/modules/donut/FakeStats.java',
+    'com/water/module/modules/donut/SpawnerProtect.java',
+    'com/water/module/modules/donut/StaffDetector.java',
+    'com/water/module/modules/donut/SuspiciousChunkFinder.java',
+    'com/water/module/modules/donut/TuffChunkV2.java',
+    'com/water/module/modules/misc/AutoLog.java',
+    'com/water/module/modules/misc/AutoTool.java',
+    'com/water/module/modules/misc/AutoTPA.java',
+    'com/water/module/modules/misc/CoordinateSnapper.java',
+    'com/water/module/modules/misc/FastPlace.java',
+    'com/water/module/modules/misc/NameTags.java',
+    'com/water/module/modules/misc/PearlESP.java',
+    'com/water/module/modules/misc/SkinChanger.java',
+    'com/water/module/modules/misc/TabDetector.java',
+    'com/water/module/modules/misc/TunnelBaseFinder.java',
+    'com/water/module/modules/render/BlockESP.java',
+    'com/water/module/modules/render/ExtraESP.java',
+    'com/water/module/modules/render/Freecam.java',
+    'com/water/module/modules/render/FutureDebug.java',
+    'com/water/module/modules/render/HoleESP.java',
+    'com/water/module/modules/render/JumpCircles.java',
+    'com/water/module/modules/render/LightDebug.java',
+    'com/water/module/modules/render/PlayerESP.java',
+    'com/water/module/modules/render/RegionMap.java',
+    'com/water/module/modules/render/SpawnerNotifier.java',
+    'com/water/module/modules/render/StorageESP.java',
+    'com/water/setting/BlocksSetting.java',
+    'com/water/setting/MobsSetting.java',
+    'com/water/spotify/SpotifyApi.java',
+    'com/water/spotify/SpotifyAuth.java',
+    'com/water/utils/FakeRolesUtil.java',
+    'com/water/utils/NameProtectUtil.java',
+    'com/water/utils/RenderUtils.java',
+    'com/water/utils/renderer/Arc2DRenderer.java',
+    'com/water/utils/renderer/Blur2DRenderer.java',
+    'com/water/utils/renderer/GuiRenderer.java',
+    'com/water/utils/renderer/Outline2DRenderer.java',
+    'com/water/utils/renderer/ProjectionUtil.java',
+    'com/water/utils/renderer/Rectangle2DRenderer.java',
+    'com/water/utils/renderer/Texture2DRenderer.java',
+    'com/water/utils/renderer/WaterFontRenderer.java'
+]
+
+sourceSets {
+    main {
+        java {
+            exclude recoveredBytecodeFallbacks
+        }
+    }
+}
+
+loom {
+    mixin {
+        useLegacyMixinAp = true
+        defaultRefmapName = 'water-refmap.json'
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.release = 21
+    options.encoding = 'UTF-8'
+}
+
+java {
+    withSourcesJar()
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
+}
+
+processResources {
+    filesMatching('fabric.mod.json') {
+        expand(version: project.version)
+    }
+}
+
+tasks.named('jar', Jar) {
+    from('src/main/prebuilt') {
+        exclude 'com/water/mixin/AbstractClientPlayerEntityMixin.class'
+        exclude 'com/water/mixin/AutoMineMixin.class'
+        exclude 'com/water/mixin/EntityMixin.class'
+        exclude 'com/water/mixin/LivingEntityMixin.class'
+    }
+}
